@@ -1,0 +1,801 @@
+[
+    {
+        "id": "c84bd7308b036373",
+        "type": "tab",
+        "label": "Flow FINAL",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "273e293de4079a47",
+        "type": "http response",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 930,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "67aa5623a550e2e6",
+        "type": "template",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"refresh\" content=\"60\">\n    <style>\n        * { box-sizing: border-box; }\n        \n        body { \n            margin: 0; padding: 0;\n            background-color: #ffffff;\n            background-image: radial-gradient(#ddd 1px, transparent 1px);\n            background-size: 24px 24px;\n            color: #000; \n            font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; \n            display: flex; flex-direction: column;\n            height: 100vh; width: 100vw;\n            overflow: hidden; \n        }\n\n        header {\n            padding: 40px;\n            background: #ff0000;\n            border-bottom: 10px solid #000;\n            transform: skewY(-1.5deg);\n            margin-top: -15px;\n            box-shadow: 15px 15px 0 #000;\n            z-index: 10;\n        }\n\n        h1 { \n            font-size: 85px; margin: 0;\n            color: white;\n            text-shadow: 8px 8px 0 #000;\n            text-transform: uppercase;\n            -webkit-text-stroke: 3px black;\n        }\n\n        main {\n            flex: 1;\n            padding: 60px 40px;\n            display: flex;\n            flex-direction: column;\n            gap: 35px;\n        }\n\n        .prof-row {\n            background: #fff;\n            border: 8px solid #000;\n            padding: 30px;\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            position: relative;\n            box-shadow: 15px 15px 0 rgba(0,0,0,0.2);\n        }\n\n        .info-block {\n            display: flex;\n            flex-direction: column;\n            gap: 10px;\n            max-width: 60%;\n        }\n\n        .prof-name {\n            font-size: 60px;\n            font-weight: 900;\n            text-transform: uppercase;\n            line-height: 0.9;\n        }\n\n        .prof-desc {\n            font-size: 28px;\n            font-weight: bold;\n            color: #000;\n            background: #ffffff;\n            padding: 5px 15px;\n            border: 3px solid #000;\n            display: inline-block;\n            box-shadow: 4px 4px 0 #000;\n        }\n\n        /* --- THE STATUS BUBBLE FIX --- */\n        .status-box {\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            min-width: 250px; /* Ensures space for \"Greviste\" */\n        }\n\n        .status-bubble {\n            background: #fff;\n            color: #000; /* Forces black text visibility */\n            border: 6px solid #000;\n            padding: 15px 30px;\n            border-radius: 60px;\n            font-size: 42px;\n            font-weight: 900;\n            text-transform: uppercase;\n            text-align: center;\n            width: 100%;\n            display: block; /* Ensures it renders as a box */\n        }\n\n        /* DYNAMIC COLORS - Lowercase to be safe */\n        .row-absent { background-color: #ffeb3b; }\n        .row-retard { background-color: #ff9800; }\n        .row-greviste { background-color: #f44336; } \n\n        /* Ensure text stays visible on Red background */\n        .row-greviste .prof-name { color: #fff; text-shadow: 4px 4px 0 #000; }\n        .row-greviste .status-bubble { background: #000; color: #fff; border-color: #fff; }\n\n    </style>\n</head>\n<body>\n\n    <header>\n        <h1>ATTENDANCE DES PROFS</h1>\n    </header>\n\n    <main>\n        {{#payload}}\n        <div class=\"prof-row row-{{STATUS}}\">\n            \n            <div class=\"info-block\">\n                <div class=\"prof-name\">{{PROF}}</div>\n                <div class=\"prof-desc\">{{DESC}}</div>\n            </div>\n\n            <div class=\"status-box\">\n                <div class=\"status-bubble\">\n                    {{STATUS}}\n                </div>\n            </div>\n\n        </div>\n        {{/payload}}\n    </main>\n\n    <footer style=\"padding: 20px 40px; background: #000; color: #fff; display: flex; justify-content: space-between; font-size: 25px; font-weight: bold;\">\n        <span><<< PRÉCÉDENT</span>\n        <span style=\"color: #ffeb3b;\">PAGE 1 / 4</span>\n        <span>SUIVANT >>></span>\n    </footer>\n\n    <script>\n        const nextPage = \"/signage2\"; \n        const prevPage = \"/signage5\"; \n        \n        // Auto-rotation\n        setInterval(() => { window.location.href = nextPage; }, 12000);\n\n        // Manual Nav\n        document.addEventListener('keydown', (e) => {\n            if (e.key === \"ArrowRight\") window.location.href = nextPage;\n            if (e.key === \"ArrowLeft\") window.location.href = prevPage;\n        });\n    </script>\n</body>\n</html>",
+        "output": "str",
+        "x": 780,
+        "y": 120,
+        "wires": [
+            [
+                "273e293de4079a47"
+            ]
+        ]
+    },
+    {
+        "id": "03f1d571e683e39c",
+        "type": "function",
+        "z": "c84bd7308b036373",
+        "name": "function 14",
+        "func": "// This version is \"bulletproof\" for debugging\nif (msg.payload && msg.payload.length > 0) {\n    // We name it 'staffList' to match the {{#staffList}} in your template\nmsg.staffList = msg.payload; return msg;\n\n} else {\n    // If we get here, the CSV node sent nothing\n    node.error(\"The CSV node sent an empty list!\");\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 120,
+        "wires": [
+            [
+                "67aa5623a550e2e6"
+            ]
+        ]
+    },
+    {
+        "id": "5d2f3d2565e1ce58",
+        "type": "csv",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "spec": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "mult",
+        "ret": "\\r\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": false,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 450,
+        "y": 100,
+        "wires": [
+            [
+                "03f1d571e683e39c",
+                "cf66dd2690f39781"
+            ]
+        ]
+    },
+    {
+        "id": "431b17737c87d740",
+        "type": "http request",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLw7xB2YDIVlXM1ZGu2QmyA_mleqiCzgm4S8P_Lrdp2X1bNo0uCajh8W771iaOFBZIoZxJslXHmZr8/pub?gid=0&single=true&output=csv",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 290,
+        "y": 100,
+        "wires": [
+            [
+                "5d2f3d2565e1ce58"
+            ]
+        ]
+    },
+    {
+        "id": "cf66dd2690f39781",
+        "type": "debug",
+        "z": "c84bd7308b036373",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "ef64fde78e36169d",
+        "type": "inject",
+        "z": "c84bd7308b036373",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 120,
+        "wires": [
+            [
+                "431b17737c87d740"
+            ]
+        ]
+    },
+    {
+        "id": "7d492180917095d7",
+        "type": "http in",
+        "z": "c84bd7308b036373",
+        "name": "Profs Absent",
+        "url": "/signage1",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 80,
+        "wires": [
+            [
+                "431b17737c87d740"
+            ]
+        ]
+    },
+    {
+        "id": "fd7d382cd31898a8",
+        "type": "http response",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 930,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "6c46a7ca1a7c81c8",
+        "type": "template",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"refresh\" content=\"20\">\n    <style>\n        /* VERTICAL RESET */\n        * { box-sizing: border-box; }\n        \n        body { \n            margin: 0; \n            padding: 40px; \n            background-color: #f4f1ea; /* Paper texture */\n            color: #1a1a1a; \n            font-family: 'Times New Roman', serif; \n            height: 100vh;\n            width: 100vw;\n            display: flex;\n            flex-direction: column;\n            overflow: hidden;\n        }\n\n        /* TALL HEADER */\n        .news-header { \n            text-align: center; \n            border-bottom: 8px double #1a1a1a; \n            border-top: 8px double #1a1a1a; \n            padding: 20px 0; \n            margin-bottom: 40px; \n        }\n\n        h1 { \n            font-size: 70px; /* Scaled up for portrait */\n            text-transform: uppercase; \n            margin: 0; \n            letter-spacing: -2px; \n        }\n\n        .header-meta {\n            display: flex; \n            justify-content: space-between; \n            font-weight: bold;\n            font-size: 20px;\n            margin-top: 10px;\n        }\n\n        /* VERTICAL COLUMN LAYOUT */\n        .news-stack { \n            flex: 1;\n            display: flex; \n            flex-direction: column; \n            gap: 50px; /* Space between vertical articles */\n        }\n\n        .article { \n            border-bottom: 1px solid #aaa; /* Bottom border instead of side */\n            padding-bottom: 30px; \n            width: 100%;\n        }\n\n        .article:last-child { border-bottom: none; }\n\n        .headline { \n            font-size: 45px; /* Larger for easy reading */\n            font-weight: bold; \n            text-decoration: underline; \n            margin-bottom: 10px; \n            display: block;\n            line-height: 1.1;\n        }\n\n        .meta { \n            font-style: italic; \n            color: #444; \n            margin-bottom: 15px; \n            display: block; \n            font-size: 24px; \n        }\n\n        .content { \n            font-size: 26px; \n            line-height: 1.4; \n            margin: 0;\n            text-align: justify;\n        }\n\n        /* PORTRAIT NAVIGATION HINT */\n        .nav-hint {\n            text-align: center;\n            font-size: 18px;\n            color: #888;\n            padding-top: 20px;\n            border-top: 1px solid #ccc;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"news-header\">\n        <h1>JOURNAL DE L'ÉCOLE</h1>\n        <div class=\"header-meta\">\n            <span>VOL. 26 NO. 3</span>\n            <span>ÉVÉNEMENTS SCOLAIRES</span>\n            <span>PAGE 2 / 4</span>\n        </div>\n    </div>\n\n    <div class=\"news-stack\">\n        {{#payload}}\n        <div class=\"article\">\n            <span class=\"headline\">{{EVENT}}</span>\n            <span class=\"meta\">📍 {{LIEU}} | 📅 {{DATE}}</span>\n            <p class=\"content\">{{DESCRIPTION}}</p>\n        </div>\n        {{/payload}}\n    </div>\n\n    <div class=\"nav-hint\">Appuyez sur ← ou → pour naviguer</div>\n\n    <script>\n    // 1. CONFIGURATION: Set your navigation targets here\n    const nextPage = \"/signage3\"; // CHANGE THIS per page (e.g. /signage3, /signage4...)\n    const prevPage = \"/signage1\"; // CHANGE THIS per page\n    const waitTime = 10000;       // 10 seconds in milliseconds\n\n    // 2. THE AUTOMATIC TIMER\n    // This will trigger the nextPage function after 10 seconds of no activity\n    const autoRotation = setInterval(() => {\n        window.location.href = nextPage;\n    }, waitTime);\n\n    // 3. MANUAL NAVIGATION (Arrows)\n    document.addEventListener('keydown', function(event) {\n        if (event.key === \"ArrowRight\") {\n            clearInterval(autoRotation); // Stop the timer if they click\n            window.location.href = nextPage;\n        } \n        else if (event.key === \"ArrowLeft\") {\n            clearInterval(autoRotation); // Stop the timer if they click\n            window.location.href = prevPage;\n        }\n    });\n</script>\n</body>\n</html>",
+        "output": "str",
+        "x": 780,
+        "y": 260,
+        "wires": [
+            [
+                "fd7d382cd31898a8"
+            ]
+        ]
+    },
+    {
+        "id": "a3170f5315ab13c6",
+        "type": "function",
+        "z": "c84bd7308b036373",
+        "name": "function 15",
+        "func": "// Check if we actually got data from the sheet\nif (msg.payload && Array.isArray(msg.payload)) {\n    return msg; \n} else {\n    node.error(\"No data found! Check your Google Sheet CSV link.\");\n    return null;\n}\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 260,
+        "wires": [
+            [
+                "6c46a7ca1a7c81c8"
+            ]
+        ]
+    },
+    {
+        "id": "cc10d0e72a49cef7",
+        "type": "csv",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "spec": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "mult",
+        "ret": "\\r\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": false,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 450,
+        "y": 240,
+        "wires": [
+            [
+                "a3170f5315ab13c6",
+                "d3bc07806dac9253"
+            ]
+        ]
+    },
+    {
+        "id": "7ceb92ab2f7ba993",
+        "type": "http request",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLw7xB2YDIVlXM1ZGu2QmyA_mleqiCzgm4S8P_Lrdp2X1bNo0uCajh8W771iaOFBZIoZxJslXHmZr8/pub?gid=1702493819&single=true&output=csv",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 290,
+        "y": 240,
+        "wires": [
+            [
+                "cc10d0e72a49cef7"
+            ]
+        ]
+    },
+    {
+        "id": "d3bc07806dac9253",
+        "type": "debug",
+        "z": "c84bd7308b036373",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "dfeebeb2be387cf7",
+        "type": "inject",
+        "z": "c84bd7308b036373",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "7ceb92ab2f7ba993"
+            ]
+        ]
+    },
+    {
+        "id": "3093a0e5f485e419",
+        "type": "http in",
+        "z": "c84bd7308b036373",
+        "name": "Evenements",
+        "url": "/signage2",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 220,
+        "wires": [
+            [
+                "7ceb92ab2f7ba993"
+            ]
+        ]
+    },
+    {
+        "id": "6c853233208431a8",
+        "type": "http response",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 930,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "7da4b686af91932a",
+        "type": "template",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"refresh\" content=\"60\">\n    <style>\n        * { box-sizing: border-box; }\n        body {\n            margin: 0; padding: 20px;\n            background: #1a1a1a; \n            font-family: 'Segoe UI', sans-serif;\n            height: 100vh; width: 100vw;\n            display: flex; flex-direction: column;\n            overflow: hidden;\n        }\n        .street-title {\n            text-align: center; font-size: 3em; font-weight: bold;\n            color: white; margin-bottom: 20px; text-transform: uppercase;\n            letter-spacing: 4px; border-bottom: 6px solid #f1c40f;\n            padding-bottom: 10px;\n        }\n        .shopping-street {\n            display: flex; flex-direction: column;\n            gap: 20px; flex: 1;\n        }\n\n        .shop-front {\n            flex: 1; border-radius: 20px;\n            display: flex; flex-direction: column;\n            box-shadow: 0 10px 30px rgba(0,0,0,0.5);\n            background: white; border: 4px solid #fff;\n            position: relative;\n            overflow: hidden;\n        }\n\n        .awning { height: 50px; width: 100%; background-size: 50px 100%; }\n        .shop-sign { background: #333; color: #fff; font-size: 1.8em; text-align: center; padding: 8px; font-weight: bold; text-transform: uppercase; }\n        \n        .window-display {\n            padding: 20px; text-align: center; flex: 1;\n            display: flex; flex-direction: column; justify-content: center;\n            position: relative;\n        }\n\n        .icon-bg {\n            position: absolute; top: 50%; left: 50%;\n            transform: translate(-50%, -50%);\n            font-size: 120px; opacity: 0.1; z-index: 0;\n        }\n\n        .article-name { font-size: 2.5em; font-weight: 800; z-index: 1; color: #222; margin: 0; }\n        .message { font-size: 1.5em; color: #444; font-style: italic; z-index: 1; }\n        .price { \n            font-size: 3em; font-weight: 900; z-index: 1;\n            margin-top: 10px; padding: 5px 25px; border-radius: 10px;\n            display: inline-block; align-self: center;\n        }\n        .price::after { content: '€'; font-size: 0.5em; }\n\n        .nav { text-align: center; color: #888; padding: 10px; font-size: 1.2em; }\n    </style>\n</head>\n<body>\n\n    <div class=\"street-title\">Marché des Rhétos</div>\n\n    <div class=\"shopping-street\">\n        {{#payload}}\n        <div class=\"shop-front\" data-article=\"{{Article}}\">\n            <div class=\"awning\"></div>\n            <div class=\"shop-sign\">Boutique {{Article}}</div>\n            <div class=\"window-display\">\n                <div class=\"icon-bg\"></div>\n                <div class=\"article-name\">{{Article}}</div>\n                <div class=\"message\">{{Message}}</div>\n                <div class=\"price\">{{Prix}}</div>\n            </div>\n        </div>\n        {{/payload}}\n    </div>\n\n    <div class=\"nav\">← Journal de l'école | Options →</div>\n\n    <script>\n        window.onload = function() {\n            const themes = {\n                rose: { color: '#ff4d6d', alt: '#ff85a1', icon: '🌹' },\n                lasagne: { color: '#009246', alt: '#ce2b37', icon: '🍝' },\n                oeuf: { color: '#6c5ce7', alt: '#a29bfe', icon: '🥚' },\n                chocolat: { color: '#4e342e', alt: '#795548', icon: '🍫' }\n            };\n\n            const defaultThemes = [\n                { color: '#0984e3', alt: '#74b9ff', icon: '🛍️' },\n                { color: '#e67e22', alt: '#f39c12', icon: '🏷️' },\n                { color: '#27ae60', alt: '#2ecc71', icon: '✨' },\n                { color: '#8e44ad', alt: '#9b59b6', icon: '🎁' },\n                { color: '#d63031', alt: '#ff7675', icon: '🔥' }\n            ];\n\n            const shops = document.querySelectorAll('.shop-front');\n            shops.forEach((shop, index) => {\n                const articleName = shop.getAttribute('data-article').toLowerCase();\n                let style = null;\n\n                // Keyword check\n                if (articleName.includes('rose')) style = themes.rose;\n                else if (articleName.includes('lasagne')) style = themes.lasagne;\n                else if (articleName.includes('oeuf') || articleName.includes('œuf')) style = themes.oeuf;\n                else if (articleName.includes('choc')) style = themes.chocolat;\n\n                // If no keyword, cycle through 5 colorful defaults\n                if (!style) {\n                    style = defaultThemes[index % defaultThemes.length];\n                }\n\n                // Apply styles safely\n                shop.querySelector('.awning').style.backgroundImage = `linear-gradient(90deg, ${style.color} 50%, ${style.alt} 50%)`;\n                shop.querySelector('.shop-sign').style.backgroundColor = style.color;\n                const p = shop.querySelector('.price');\n                p.style.backgroundColor = style.color;\n                p.style.color = 'white';\n                shop.querySelector('.icon-bg').innerText = style.icon;\n            });\n        };\n\n        // Navigation & Auto-Rotate\n        const nextPage = \"/signage4\"; \n        const prevPage = \"/signage2\"; \n        const autoRotation = setInterval(() => { window.location.href = nextPage; }, 10000);\n\n        document.addEventListener('keydown', function(event) {\n            if (event.key === \"ArrowRight\") window.location.href = nextPage;\n            if (event.key === \"ArrowLeft\") window.location.href = prevPage;\n        });\n    </script>\n</body>\n</html>",
+        "output": "str",
+        "x": 780,
+        "y": 400,
+        "wires": [
+            [
+                "6c853233208431a8"
+            ]
+        ]
+    },
+    {
+        "id": "c51bf76bd38e8ffe",
+        "type": "function",
+        "z": "c84bd7308b036373",
+        "name": "function 16",
+        "func": "// This version is \"bulletproof\" for debugging\nif (msg.payload && msg.payload.length > 0) {\n    // We name it 'staffList' to match the {{#staffList}} in your template\nmsg.staffList = msg.payload; return msg;\n\n} else {\n    // If we get here, the CSV node sent nothing\n    node.error(\"The CSV node sent an empty list!\");\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 400,
+        "wires": [
+            [
+                "7da4b686af91932a"
+            ]
+        ]
+    },
+    {
+        "id": "b6f82d6070df53ed",
+        "type": "csv",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "spec": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "mult",
+        "ret": "\\r\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": false,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 450,
+        "y": 380,
+        "wires": [
+            [
+                "c51bf76bd38e8ffe",
+                "1a1ac838b00a68fe"
+            ]
+        ]
+    },
+    {
+        "id": "913ab8a114915d83",
+        "type": "http request",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLw7xB2YDIVlXM1ZGu2QmyA_mleqiCzgm4S8P_Lrdp2X1bNo0uCajh8W771iaOFBZIoZxJslXHmZr8/pub?gid=2054837440&single=true&output=csv",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 290,
+        "y": 380,
+        "wires": [
+            [
+                "b6f82d6070df53ed"
+            ]
+        ]
+    },
+    {
+        "id": "1a1ac838b00a68fe",
+        "type": "debug",
+        "z": "c84bd7308b036373",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "bec824f10412d0b4",
+        "type": "inject",
+        "z": "c84bd7308b036373",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "913ab8a114915d83"
+            ]
+        ]
+    },
+    {
+        "id": "ed02cfafccb8e959",
+        "type": "http in",
+        "z": "c84bd7308b036373",
+        "name": "Publiciter Rheto",
+        "url": "/signage3",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 360,
+        "wires": [
+            [
+                "913ab8a114915d83"
+            ]
+        ]
+    },
+    {
+        "id": "5dd901450759c574",
+        "type": "http response",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 930,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "35a4da8929b86268",
+        "type": "template",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"refresh\" content=\"30\">\n    <style>\n        * { box-sizing: border-box; }\n        \n        body {\n            margin: 0; padding: 40px;\n            background: #ffffff;\n            color: #000; \n            font-family: \"Comic Sans MS\", \"Comic Sans\", cursive;\n            height: 100vh; width: 100vw;\n            display: flex; flex-direction: column;\n            overflow: hidden;\n        }\n\n        .header { \n            text-align: center; font-size: 5em; margin-bottom: 30px; \n            font-weight: 900; border-bottom: 10px solid #000;\n            padding-bottom: 10px; transform: rotate(-1deg);\n        }\n        \n        .options-wrapper {\n            display: flex; flex-direction: column; gap: 25px; flex: 1;\n        }\n\n        .card {\n            flex: 1; border: 6px solid #000; padding: 30px;\n            display: flex; flex-direction: column; justify-content: center;\n            position: relative; overflow: hidden;\n            box-shadow: 12px 12px 0px #000;\n            background: white;\n            z-index: 1;\n        }\n\n        /* --- SCIENCE FORT: BUBBLES --- */\n        [id*=\"Science Fort\"] { background-color: #99ff99; }\n        .bubble {\n            position: absolute; background: rgba(255,255,255,0.4);\n            border: 2px solid #000; border-radius: 50%;\n            bottom: -50px; animation: rise 4s infinite ease-in;\n            z-index: -1;\n        }\n        @keyframes rise {\n            0% { transform: translateY(0) scale(1); opacity: 1; }\n            100% { transform: translateY(-400px) scale(1.5); opacity: 0; }\n        }\n\n        /* --- SCIENCE ECO: RAINING MONEY --- */\n        [id*=\"Eco\"] { background-color: #ffff66; }\n        .money {\n            position: absolute; font-size: 40px; font-weight: bold;\n            top: -50px; animation: rain 3s infinite linear;\n            z-index: -1; color: #2ecc71;\n            text-shadow: 2px 2px 0 #000;\n        }\n        @keyframes rain {\n            0% { transform: translateY(0) rotate(0deg); }\n            100% { transform: translateY(600px) rotate(360deg); }\n        }\n\n        /* --- INFORMATIQUE: GLOWING HACKER THEME --- */\n        [id*=\"Informatique\"], [id*=\"IT\"] { \n            background-color: #000; \n            color: #00ff41; \n            border-color: #00ff41;\n            box-shadow: 12px 12px 0px #003300;\n        }\n        \n        [id*=\"Informatique\"] .title, [id*=\"IT\"] .title {\n            color: #00ff41;\n            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;\n            animation: glow 1.5s ease-in-out infinite alternate;\n        }\n\n        [id*=\"Informatique\"] .desc, [id*=\"IT\"] .desc { \n            color: #00ff41; \n            font-family: 'Courier New', monospace; \n            text-shadow: 0 0 5px #00ff41;\n        }\n\n        /* The falling code particles */\n        .code-bit {\n            position: absolute; color: #003300; font-family: monospace;\n            font-size: 20px; top: -20px; z-index: -1;\n            animation: fall 2s infinite linear;\n        }\n\n        @keyframes glow {\n            from { text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41; }\n            to { text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41, 0 0 10px #fff; }\n        }\n\n        @keyframes fall {\n            to { transform: translateY(500px); opacity: 0; }\n        }\n\n        .cursor { animation: blink 0.8s infinite; }\n        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }\n\n        /* General UI Styles */\n        .title { font-size: 3.5em; font-weight: 900; margin: 0; text-transform: uppercase; z-index: 2; }\n        .hours { \n            font-size: 1.5em; background: #000; color: #fff;\n            padding: 5px 20px; width: fit-content; margin-bottom: 10px; z-index: 2;\n            border: 2px solid currentColor;\n        }\n        .desc { font-size: 1.8em; line-height: 1.2; max-width: 80%; font-weight: bold; z-index: 2; }\n        .nav { padding-top: 30px; text-align: center; font-weight: 900; font-size: 1.5em; }\n    </style>\n</head>\n<body>\n\n    <div class=\"header\">NOS OPTIONS</div>\n\n    <div class=\"options-wrapper\">\n        {{#payload}}\n        <div class=\"card\" id=\"{{OPTION}}\">\n            <div class=\"hours\">{{HEURES}} HEURES</div>\n            <div class=\"title\">{{OPTION}} <span class=\"cursor\">_</span></div>\n            <div class=\"desc\">{{DESCRIPTION}}</div>\n        </div>\n        {{/payload}}\n    </div>\n\n    <div class=\"nav\">← PROFS | ACCUEIL →</div>\n\n    <script>\n        document.querySelectorAll('.card').forEach(card => {\n            const id = card.id.toLowerCase();\n            \n            // SCIENCE FORT: Bubbles\n            if (id.includes('science fort')) {\n                for(let i=0; i<12; i++) {\n                    let b = document.createElement('div');\n                    b.className = 'bubble';\n                    b.style.left = Math.random() * 100 + '%';\n                    b.style.width = b.style.height = Math.random() * 40 + 20 + 'px';\n                    b.style.animationDelay = Math.random() * 4 + 's';\n                    card.appendChild(b);\n                }\n            }\n            \n            // ECO: Raining Money\n            if (id.includes('eco')) {\n                for(let i=0; i<10; i++) {\n                    let m = document.createElement('div');\n                    m.className = 'money';\n                    m.innerText = '$';\n                    m.style.left = Math.random() * 100 + '%';\n                    m.style.animationDelay = Math.random() * 3 + 's';\n                    card.appendChild(m);\n                }\n            }\n\n            // INFORMATIQUE: Falling Numbers/Binary\n            if (id.includes('informatique') || id.includes('it')) {\n                for(let i=0; i<20; i++) {\n                    let c = document.createElement('div');\n                    c.className = 'code-bit';\n                    c.innerText = Math.round(Math.random()); // Random 0 or 1\n                    c.style.left = Math.random() * 100 + '%';\n                    c.style.animationDuration = (Math.random() * 2 + 1) + 's';\n                    c.style.animationDelay = Math.random() * 2 + 's';\n                    card.appendChild(c);\n                }\n            }\n        });\n\n        // Navigation targets\n        const nextPage = \"/signage5\"; \n        const prevPage = \"/signage3\"; \n        const waitTime = 10000; \n\n        const autoRotation = setInterval(() => { window.location.href = nextPage; }, waitTime);\n\n        document.addEventListener('keydown', function(event) {\n            if (event.key === \"ArrowRight\") { window.location.href = nextPage; } \n            else if (event.key === \"ArrowLeft\") { window.location.href = prevPage; }\n        });\n    </script>\n</body>\n</html>",
+        "output": "str",
+        "x": 780,
+        "y": 540,
+        "wires": [
+            [
+                "5dd901450759c574"
+            ]
+        ]
+    },
+    {
+        "id": "a3a8ab095e4b0f74",
+        "type": "function",
+        "z": "c84bd7308b036373",
+        "name": "function 17",
+        "func": "// This version is \"bulletproof\" for debugging\nif (msg.payload && msg.payload.length > 0) {\n    // We name it 'staffList' to match the {{#staffList}} in your template\nmsg.staffList = msg.payload; return msg;\n\n} else {\n    // If we get here, the CSV node sent nothing\n    node.error(\"The CSV node sent an empty list!\");\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 540,
+        "wires": [
+            [
+                "35a4da8929b86268"
+            ]
+        ]
+    },
+    {
+        "id": "114c8269e40b8ee6",
+        "type": "csv",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "spec": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "mult",
+        "ret": "\\r\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": false,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 450,
+        "y": 520,
+        "wires": [
+            [
+                "a3a8ab095e4b0f74",
+                "fada16c52f8b52d8"
+            ]
+        ]
+    },
+    {
+        "id": "353536a4f8de2104",
+        "type": "http request",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLw7xB2YDIVlXM1ZGu2QmyA_mleqiCzgm4S8P_Lrdp2X1bNo0uCajh8W771iaOFBZIoZxJslXHmZr8/pub?gid=1367176715&single=true&output=csv",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 290,
+        "y": 520,
+        "wires": [
+            [
+                "114c8269e40b8ee6"
+            ]
+        ]
+    },
+    {
+        "id": "fada16c52f8b52d8",
+        "type": "debug",
+        "z": "c84bd7308b036373",
+        "name": "debug 14",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "816bdf335fe4d29c",
+        "type": "inject",
+        "z": "c84bd7308b036373",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "353536a4f8de2104"
+            ]
+        ]
+    },
+    {
+        "id": "5874062842e771bb",
+        "type": "http in",
+        "z": "c84bd7308b036373",
+        "name": "Options",
+        "url": "/signage4",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 500,
+        "wires": [
+            [
+                "353536a4f8de2104"
+            ]
+        ]
+    },
+    {
+        "id": "7f99e52e5b8b37dc",
+        "type": "http response",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 870,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "e61533b76a377a5d",
+        "type": "template",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        /* SPRING AESTHETIC - HIGH CONTRAST */\n        * { box-sizing: border-box; }\n        \n        html, body {\n            margin: 0; padding: 0;\n            height: 100%; width: 100%;\n            background: linear-gradient(to bottom, #87ceeb 0%, #e0f7fa 100%);\n            color: #1b3d17; \n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            overflow: hidden;\n            position: fixed;\n        }\n\n        /* --- ROLLING HILLS --- */\n        .hill {\n            position: fixed;\n            bottom: 0;\n            width: 150%;\n            height: 40vh;\n            background: #7ed957;\n            border-radius: 50% 50% 0 0;\n            z-index: 3;\n        }\n        .hill-back {\n            bottom: -5vh;\n            left: -25%;\n            background: #a2e685;\n            height: 45vh;\n            z-index: 2;\n        }\n\n        /* --- DRIFTING PETALS --- */\n        #petal-container { position: fixed; width: 100%; height: 100%; z-index: 1; }\n        .petal {\n            position: absolute;\n            top: -50px;\n            border-radius: 150% 0 150% 0;\n            opacity: 0.6;\n            animation: fall linear infinite;\n        }\n        @keyframes fall {\n            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }\n            10% { opacity: 0.8; }\n            100% { transform: translateY(110vh) translateX(100px) rotate(360deg); opacity: 0; }\n        }\n\n        /* --- THE STATIONARY BEE (Bottom Right) --- */\n        #bee-box {\n            position: fixed;\n            bottom: 40px;\n            right: 40px;\n            display: flex;\n            align-items: center;\n            z-index: 100;\n            animation: hover 3s infinite ease-in-out;\n        }\n        @keyframes hover {\n            0%, 100% { transform: translateY(0); }\n            50% { transform: translateY(-20px); }\n        }\n        #bee-emoji {\n            font-size: 120px;\n            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.2));\n            transform: scaleX(-1); /* Facing left */\n        }\n        #chat-bubble {\n            background: white;\n            color: #d4a017;\n            padding: 15px 25px;\n            border-radius: 25px 25px 5px 25px;\n            font-weight: bold;\n            font-size: 1.8rem;\n            position: absolute;\n            top: -70px; right: 100px;\n            white-space: nowrap;\n            box-shadow: 0 10px 25px rgba(0,0,0,0.1);\n            border: 3px solid #fff9c4;\n        }\n\n        /* --- UI LAYER & TEXT SHADOWING --- */\n        .ui-layer {\n            position: relative;\n            height: 100%; width: 100%;\n            display: flex; \n            flex-direction: column;\n            align-items: center; \n            justify-content: center;\n            text-align: center;\n            z-index: 10; \n            gap: 40px;\n        }\n        \n        h1 { \n            font-size: 8rem; \n            margin: 0; \n            color: #ffffff; \n            /* Heavy shadow for maximum visibility */\n            text-shadow: \n                4px 4px 0px rgba(0,0,0,0.1),\n                0px 0px 30px rgba(45, 90, 39, 0.6);\n            letter-spacing: 8px;\n            font-weight: 900;\n            line-height: 1;\n        }\n\n        .credit-text { \n            color: #ffffff; \n            font-size: 3.5rem; \n            font-weight: 700;\n            background: rgba(45, 90, 39, 0.7); /* Darker background for contrast */\n            padding: 10px 60px;\n            border-radius: 100px;\n            backdrop-filter: blur(10px);\n            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);\n            border: 2px solid rgba(255,255,255,0.3);\n        }\n\n        /* --- QR SECTION --- */\n        .qr-bubble {\n            flex-shrink: 0;\n            width: 500px; \n            height: 500px;\n            background: rgba(255, 255, 255, 0.9); /* Higher opacity */\n            backdrop-filter: blur(10px);\n            border: 12px solid #ffffff;\n            border-radius: 60px;\n            display: flex; \n            flex-direction: column;\n            align-items: center; \n            justify-content: center;\n            box-shadow: 0 30px 60px rgba(0,0,0,0.15);\n        }\n\n        .qr-bubble img { \n            width: 320px; \n            height: 320px; \n            border-radius: 10px; \n        }\n\n        .qr-label {\n            margin-top: 20px; \n            font-weight: 900; \n            color: #2d5a27;\n            font-size: 2.8rem;\n            text-shadow: none; /* Keep clean for scanning focus */\n        }\n    </style>\n</head>\n<body>\n\n    <div class=\"hill hill-back\"></div>\n    <div class=\"hill\"></div>\n    <div id=\"petal-container\"></div>\n\n    <div id=\"bee-box\">\n        <div id=\"chat-bubble\">C'est moi qui l'ai fait ! 🌸</div>\n        <div id=\"bee-emoji\">🐝</div>\n    </div>\n\n    <div class=\"ui-layer\">\n        <h1>P4TH SIGNAGE</h1>\n        <div class=\"credit-text\">Projet réalisé par Leilah Q.</div>\n        <div class=\"qr-bubble\">\n            <img src=\"https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://www.p4th.be\">\n            <div class=\"qr-label\">P4TH.BE</div>\n        </div>\n    </div>\n\n    <script>\n        // PETALS LOGIC\n        const pCont = document.getElementById('petal-container');\n        for (let i = 0; i < 40; i++) {\n            const p = document.createElement('div');\n            p.className = 'petal';\n            const size = Math.random() * 15 + 10 + 'px';\n            p.style.width = size; \n            p.style.height = size;\n            p.style.left = Math.random() * 100 + 'vw';\n            p.style.animationDuration = (Math.random() * 5 + 5) + 's';\n            p.style.animationDelay = Math.random() * 8 + 's';\n            p.style.background = ['#ffc0cb', '#ffb7c5', '#ffffff'][Math.floor(Math.random() * 3)];\n            pCont.appendChild(p);\n        }\n\n        /// Navigation targets\n        const nextPage = \"/signage1\"; \n        const prevPage = \"/signage4\"; \n        const waitTime = 10000; \n\n        const autoRotation = setInterval(() => { window.location.href = nextPage; }, waitTime);\n\n        document.addEventListener('keydown', function(event) {\n            if (event.key === \"ArrowRight\") { window.location.href = nextPage; } \n            else if (event.key === \"ArrowLeft\") { window.location.href = prevPage; }\n        });\n    </script>\n</body>\n</html>",
+        "output": "str",
+        "x": 700,
+        "y": 680,
+        "wires": [
+            [
+                "7f99e52e5b8b37dc"
+            ]
+        ]
+    },
+    {
+        "id": "528610d5b369fe01",
+        "type": "function",
+        "z": "c84bd7308b036373",
+        "name": "function 19",
+        "func": "// This version is \"bulletproof\" for debugging\nif (msg.payload && msg.payload.length > 0) {\n    // We name it 'staffList' to match the {{#staffList}} in your template\nmsg.staffList = msg.payload; return msg;\n\n} else {\n    // If we get here, the CSV node sent nothing\n    node.error(\"The CSV node sent an empty list!\");\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 680,
+        "wires": [
+            [
+                "e61533b76a377a5d"
+            ]
+        ]
+    },
+    {
+        "id": "332c84d39c23b5dd",
+        "type": "http request",
+        "z": "c84bd7308b036373",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLw7xB2YDIVlXM1ZGu2QmyA_mleqiCzgm4S8P_Lrdp2X1bNo0uCajh8W771iaOFBZIoZxJslXHmZr8/pub?gid=1367176715&single=true&output=csv",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 660,
+        "wires": [
+            [
+                "ee9ec2ef642a70f5",
+                "528610d5b369fe01"
+            ]
+        ]
+    },
+    {
+        "id": "ee9ec2ef642a70f5",
+        "type": "debug",
+        "z": "c84bd7308b036373",
+        "name": "debug 16",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "d41a76a08cbb82f2",
+        "type": "inject",
+        "z": "c84bd7308b036373",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 680,
+        "wires": [
+            [
+                "332c84d39c23b5dd"
+            ]
+        ]
+    },
+    {
+        "id": "090b13f084243edd",
+        "type": "http in",
+        "z": "c84bd7308b036373",
+        "name": "Credits + QR code",
+        "url": "/signage5",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 640,
+        "wires": [
+            [
+                "332c84d39c23b5dd"
+            ]
+        ]
+    }
+]
